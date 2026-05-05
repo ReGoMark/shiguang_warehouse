@@ -25,19 +25,57 @@ function parseJsonData(jsonData) {
         return [];
     }
 
-    return jsonData.data.filter(raw => {
-        return raw.kcmc && raw.xq && raw.ps && raw.pe && raw.zc;
-    }).map(raw => {
-        return {
-            name: raw.kcmc.trim(),
-            teacher: (raw.teaxms || "未知教师").trim(),
-            position: (raw.jxcdmc || "未知地点").trim(),
-            day: Number(raw.xq),
-            startSection: Number(raw.ps),
-            endSection: Number(raw.pe),
-            weeks: parseWeeks(raw.zc)
-        };
-    }).filter(course => {
+    let allProcessedCourses = [];
+
+    jsonData.data.forEach(raw => {
+        // 基础字段校验
+        if (!(raw.kcmc && raw.xq && raw.ps && raw.pe)) return;
+
+        // 识别并解析 jxcdmc2
+        const locationMap = new Map();
+        if (raw.jxcdmc2) {
+            const parts = raw.jxcdmc2.split(',');
+            parts.forEach(part => {
+                const lastDashIndex = part.lastIndexOf('-');
+                if (lastDashIndex !== -1) {
+                    const room = part.substring(0, lastDashIndex).trim();
+                    const week = Number(part.substring(lastDashIndex + 1));
+                    if (!isNaN(week)) {
+                        if (!locationMap.has(room)) locationMap.set(room, []);
+                        locationMap.get(room).push(week);
+                    }
+                }
+            });
+        }
+
+        if (locationMap.size > 0) {
+            // 如果解析成功，则根据地点拆分为多个课程对象
+            locationMap.forEach((weeks, room) => {
+                allProcessedCourses.push({
+                    name: raw.kcmc.trim(),
+                    teacher: (raw.teaxms || "未知教师").trim(),
+                    position: room || "未知地点",
+                    day: Number(raw.xq),
+                    startSection: Number(raw.ps),
+                    endSection: Number(raw.pe),
+                    weeks: weeks.sort((a, b) => a - b) // 必须升序排列
+                });
+            });
+        } else if (raw.zc) {
+            // 兜底方案：如果 jxcdmc2 无效，使用原有的 jxcdmc 和 zc 逻辑
+            allProcessedCourses.push({
+                name: raw.kcmc.trim(),
+                teacher: (raw.teaxms || "未知教师").trim(),
+                position: (raw.jxcdmc || "未知地点").trim(),
+                day: Number(raw.xq),
+                startSection: Number(raw.ps),
+                endSection: Number(raw.pe),
+                weeks: parseWeeks(raw.zc)
+            });
+        }
+    });
+
+    return allProcessedCourses.filter(course => {
         return course.weeks.length > 0 && course.startSection <= course.endSection;
     });
 }

@@ -1,0 +1,9 @@
+# resources/GDUST/adapters.yaml
+adapters:
+  - adapter_id: "GDUST"
+    adapter_name: "广东科技学院正方教务"
+    category: "BACHELOR_AND_ASSOCIATE"
+    asset_js_path: "gdust.js"
+    import_url: "https://portal.gdust.edu.cn"
+    maintainer: "星河欲转"
+    description: "广东科技学院适配教务,登录后需要进入教务系统才可以点击导入,非本校开发者适配如果有误建议提交issues"

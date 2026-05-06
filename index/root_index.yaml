@@ -436,3 +436,8 @@ schools:
     name: "山东石油化工学院"
     initial: "S"
     resource_folder: "SDIPCT"  
+
+  - id: "GDUST"
+    name: "广东科技学院"
+    initial: "G"
+    resource_folder: "GDUST"      

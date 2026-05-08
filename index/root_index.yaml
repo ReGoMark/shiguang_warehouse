@@ -450,4 +450,9 @@ schools:
   - id: "TJAU"
     name: "天津农学院"
     initial: "T"
-    resource_folder: "TJAU"     
+    resource_folder: "TJAU"
+
+  - id: "CCIT"
+    name: "长春工程学院"
+    initial: "C"
+    resource_folder: "CCIT"       

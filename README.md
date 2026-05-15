@@ -28,14 +28,15 @@
 示例：
 ```yaml
 schools: #固定字段
-      - id: "GLOBAL_TOOLS"
-            name: "通用工具与服务"
-            initial: "G"
-            resource_folder: "GLOBAL_TOOLS"
-      - id: "CUST"
-            name: "长春理工大学"
-            initial: "C"
-            resource_folder: "CUST"
+  - id: "GLOBAL_TOOLS"
+    name: "通用工具与服务"
+    initial: "G"
+    resource_folder: "GLOBAL_TOOLS"
+
+  - id: "CUST"
+    name: "长春理工大学"
+    initial: "C"
+    resource_folder: "CUST"
 ```
 
 ### 适配注意
@@ -71,13 +72,13 @@ schools: #固定字段
 示例：
 ```yaml
 adapters: #固定字段
-      - adapter_id: "GENERAL_TOOL_01" # id加上序号
-            adapter_name: "组件测试"
-            category: "GENERAL_TOOL"
-            asset_js_path: "school.js" #相对路径
-            import_url: ""
-            maintainer: "星河欲转"
-            description: "这是一个空网站，用于组件测试与演示模式"
+  - adapter_id: "GENERAL_TOOL_01" # id加上序号
+    adapter_name: "组件测试"
+    category: "GENERAL_TOOL"
+    asset_js_path: "school.js" #相对路径
+    import_url: ""
+    maintainer: "星河欲转"
+    description: "这是一个空网站，用于组件测试与演示模式"
 ```
 
 **注意：**  

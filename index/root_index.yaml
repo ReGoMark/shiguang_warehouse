@@ -476,3 +476,8 @@ schools:
     name: "江西师范大学"
     initial: "J"
     resource_folder: "JXNU"
+
+  - id: "STCNCHU"
+    name: "南昌航空大学科技学院"
+    initial: "N"
+    resource_folder: "STCNCHU"

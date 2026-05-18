@@ -505,4 +505,10 @@ schools:
   - id: "CAUC"
     name: "中国民航大学"
     initial: "Z"
-    resource_folder: "CAUC"  
+    resource_folder: "CAUC"
+
+  - id: "ECJTU"
+    name: "华东交通大学"
+    initial: "H"
+    resource_folder: "ECJTU"
+

@@ -512,3 +512,8 @@ schools:
     initial: "H"
     resource_folder: "ECJTU"
 
+  - id: "WENHUA"
+    name: "文华学院"
+    initial: "W"
+    resource_folder: "WENHUA"
+

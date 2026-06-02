@@ -541,3 +541,8 @@ schools:
     name: "浙江工业大学"
     initial: "Z"
     resource_folder: "ZJUT"
+  
+  - id: "HFNU"
+    name: "合肥师范学院"
+    initial: "H"
+    resource_folder: "HFNU"  

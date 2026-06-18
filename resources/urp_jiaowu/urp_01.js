@@ -1,16 +1,6 @@
 // 通用 URP 教务拾光课程表适配脚本
 
 /**
- * 验证学年输入（4位数字）
- */
-function validateYear(year) {
-    if (!year || year.trim().length === 0) return "学年不能为空！";
-    const yearRegex = /^\d{4}$/;
-    if (!yearRegex.test(year)) return "请输入正确的4位数字学年（例如：2025）";
-    return false;
-}
-
-/**
  * 解析位图格式的周次 (011100...)
  */
 function parseWeekString(weekStr) {
@@ -49,38 +39,10 @@ async function promptUserToStart() {
 }
 
 /**
- * 获取学年
- */
-async function getAcademicYear() {
-    return await window.AndroidBridgePromise.showPrompt(
-        "学年设置",
-        "请输入要导入课程的起始学年（例如 2025-2026 应输入2025）:",
-        "", 
-        "validateYear"
-    );
-}
-
-/**
- * 获取学期
- */
-async function selectSemester() {
-    const semesters = ["1（第一学期）", "2（第二学期）"];
-    return await window.AndroidBridgePromise.showSingleSelection(
-        "选择学期", 
-        JSON.stringify(semesters),
-        -1 
-    );
-}
-
-/**
  * 网络请求和数据解析
  */
-async function fetchAndParseJwData(academicYear, semesterIndex) {
+async function fetchAndParseJwData() {
     try {
-        const semesterValue = parseInt(semesterIndex) + 1; 
-        const endYear = parseInt(academicYear) + 1;
-        const planCode = `${academicYear}-${endYear}-${semesterValue}-1`;
-        
         const apiUrl = getApiUrl();
         console.log("正在通过动态地址获取教务数据:", apiUrl);
 
@@ -88,7 +50,6 @@ async function fetchAndParseJwData(academicYear, semesterIndex) {
         
         const response = await fetch(apiUrl, {
             "headers": { "content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
-            "body": `&planCode=${planCode}`,
             "method": "POST",
             "credentials": "include"
         });
@@ -125,8 +86,7 @@ async function fetchAndParseJwData(academicYear, semesterIndex) {
                                 day: parseInt(tp.classDay),
                                 startSection: parseInt(tp.classSessions),
                                 endSection: parseInt(tp.classSessions) + parseInt(tp.continuingSession) - 1,
-                                weeks: parseWeekString(tp.classWeek),
-                                isCustomTime: false
+                                weeks: parseWeekString(tp.classWeek)
                             });
                         });
                     }
@@ -171,19 +131,7 @@ async function runImportFlow() {
     const alertResult = await promptUserToStart();
     if (!alertResult) return;
 
-    const academicYear = await getAcademicYear();
-    if (academicYear === null) {
-        AndroidBridge.showToast("导入已取消");
-        return;
-    }
-
-    const semesterIndex = await selectSemester();
-    if (semesterIndex === null) {
-        AndroidBridge.showToast("导入已取消");
-        return;
-    }
-
-    const result = await fetchAndParseJwData(academicYear, semesterIndex);
+    const result = await fetchAndParseJwData();
     if (!result || result.courses.length === 0) return;
 
     if (await saveToApp(result)) {
@@ -193,4 +141,4 @@ async function runImportFlow() {
 }
 
 // 启动
-runImportFlow();
+runImportFlow(); 

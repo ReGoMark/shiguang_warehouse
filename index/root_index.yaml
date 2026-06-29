@@ -566,3 +566,8 @@ schools:
     name: "齐齐哈尔大学"
     initial: "Q"
     resource_folder: "QQHRU"  
+
+  - id: "SICNU"
+    name: "四川师范大学"
+    initial: "S"
+    resource_folder: "SICNU"

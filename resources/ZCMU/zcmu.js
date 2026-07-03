@@ -203,22 +203,50 @@ async function saveCourses(parsedCourses) {
     }
 }
 
-// 浙江中医药大学作息时间表
-const TimeSlots = [
-    { number: 1,  startTime: "08:15", endTime: "08:55" },
-    { number: 2,  startTime: "09:00", endTime: "09:40" },
-    { number: 3,  startTime: "09:55", endTime: "10:35" },
-    { number: 4,  startTime: "10:40", endTime: "11:20" },
-    { number: 5,  startTime: "11:25", endTime: "12:05" },
-    { number: 6,  startTime: "13:45", endTime: "14:25" },
-    { number: 7,  startTime: "14:30", endTime: "15:10" },
-    { number: 8,  startTime: "15:20", endTime: "16:00" },
-    { number: 9,  startTime: "16:05", endTime: "16:45" },
-    { number: 10, startTime: "16:50", endTime: "17:55" },
-    { number: 11, startTime: "18:00", endTime: "18:40" },
-    { number: 12, startTime: "18:45", endTime: "19:25" },
-    { number: 13, startTime: "19:30", endTime: "20:10" }
-];
+// 浙江中医药大学作息时间表（两校区不同）
+const CampusTimeSlots = {
+    "滨文校区": [
+        { number: 1,  startTime: "08:15", endTime: "08:55" },
+        { number: 2,  startTime: "09:00", endTime: "09:40" },
+        { number: 3,  startTime: "09:55", endTime: "10:35" },
+        { number: 4,  startTime: "10:40", endTime: "11:20" },
+        { number: 5,  startTime: "11:25", endTime: "12:05" },
+        { number: 6,  startTime: "13:45", endTime: "14:25" },
+        { number: 7,  startTime: "14:30", endTime: "15:10" },
+        { number: 8,  startTime: "15:20", endTime: "16:00" },
+        { number: 9,  startTime: "16:05", endTime: "16:45" },
+        { number: 10, startTime: "16:50", endTime: "17:55" },
+        { number: 11, startTime: "18:00", endTime: "18:40" },
+        { number: 12, startTime: "18:45", endTime: "19:25" },
+        { number: 13, startTime: "19:30", endTime: "20:10" }
+    ],
+    "富春校区": [
+        { number: 1,  startTime: "08:30", endTime: "09:10" },
+        { number: 2,  startTime: "09:15", endTime: "09:55" },
+        { number: 3,  startTime: "10:10", endTime: "10:50" },
+        { number: 4,  startTime: "10:55", endTime: "11:35" },
+        { number: 5,  startTime: "11:35", endTime: "13:15" },
+        { number: 6,  startTime: "13:20", endTime: "14:00" },
+        { number: 7,  startTime: "14:05", endTime: "14:45" },
+        { number: 8,  startTime: "14:55", endTime: "15:35" },
+        { number: 9,  startTime: "15:40", endTime: "16:20" },
+        { number: 10, startTime: "16:25", endTime: "17:05" },
+        { number: 11, startTime: "18:00", endTime: "18:40" },
+        { number: 12, startTime: "18:45", endTime: "19:25" },
+        { number: 13, startTime: "19:30", endTime: "20:10" }
+    ]
+};
+
+async function selectCampus() {
+    const campuses = Object.keys(CampusTimeSlots);
+    const campusIndex = await window.AndroidBridgePromise.showSingleSelection(
+        "选择校区",
+        JSON.stringify(campuses),
+        0
+    );
+    if (campusIndex === null) return null;
+    return campuses[campusIndex];
+}
 
 async function importPresetTimeSlots(timeSlots) {
     if (timeSlots.length > 0) {
@@ -251,6 +279,12 @@ async function runImportFlow() {
         return;
     }
 
+    const campus = await selectCampus();
+    if (campus === null) {
+        AndroidBridge.showToast("导入已取消。");
+        return;
+    }
+
     const result = await fetchAndParseCourses(academicYear, semesterIndex);
     if (result === null) return;
     const { courses, config } = result;
@@ -265,9 +299,9 @@ async function runImportFlow() {
         AndroidBridge.showToast("课表配置保存失败: " + error.message);
     }
 
-    await importPresetTimeSlots(TimeSlots);
+    await importPresetTimeSlots(CampusTimeSlots[campus]);
 
-    AndroidBridge.showToast("课程导入成功，共导入 " + courses.length + " 门课程！");
+    AndroidBridge.showToast(campus + "课程导入成功，共导入 " + courses.length + " 门课程！");
     AndroidBridge.notifyTaskCompletion();
 }
 
